@@ -36,10 +36,11 @@ def load_simple_house_data(filename, isStd=False):
         
 
 def split_data(X, y, ratio=0.8):
-    split = int(len(X) * ratio)
+    # split = int(len(X) * ratio)
+    split = len(X) - 625
     X_train, y_train = X[:split], y[:split]
     X_test, y_test = X[split:], y[split:]
-    return X_train, y_train, X_test, y_test
+    return np.array(X_train), np.array(y_train), np.array(X_test), np.array(y_test)
     
 if __name__ == "__main__":
     
