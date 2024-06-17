@@ -1,14 +1,14 @@
 import numpy as np
 import pandas as pd
 import seaborn as sns
-df = pd.read_csv('house_price.csv')
+df = pd.read_csv('data/house_price.csv')
 
 
 # print(df['SalePrice'].describe())
 # sns.histplot(df['SalePrice'])
 
 def load_advanced_house_data(isStd=False):
-    data = pd.read_csv('house_price.csv')
+    data = pd.read_csv('data/house_price.csv')
     # X = data['GrLivArea']
     
     X = data[['OverallQual', 'GrLivArea']]
@@ -44,7 +44,7 @@ def split_data(X, y, ratio=0.8):
     
 if __name__ == "__main__":
     
-    X, y = load_simple_house_data('house.txt', True)
+    X, y = load_simple_house_data('data/house.txt', True)
     X_train, y_train, X_test, y_test = split_data(X=X, y=y)
     print(X_train.shape, y_train.shape)
     print(X_test.shape, y_test.shape)

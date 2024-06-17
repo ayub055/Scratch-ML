@@ -1,8 +1,8 @@
 import numpy as np
 import pandas as pd
-from helper import mse
+from src.helper import mse
 import matplotlib.pyplot as plt
-from dataloader import load_data, split_data
+from src.dataloader import load_advanced_house_data, split_data
 
 
 class LinearRegression:
@@ -39,7 +39,7 @@ class LinearRegression:
  
 if __name__ == "__main__":
     
-    X, y = load_data(isStd=True)
+    X, y = load_advanced_house_data(isStd=True)
     X_train, y_train, X_test, y_test = split_data(X, y, ratio=0.8)
     print(X_train.shape, y_train.shape)
     num_samples, num_features = X_train.shape
