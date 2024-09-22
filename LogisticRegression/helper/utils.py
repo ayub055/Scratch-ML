@@ -1,6 +1,9 @@
 import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
+import numpy as np
+import plotly.express as px
+import plotly.graph_objects as go
 
 def sigmoid(x, derivative=False):
     prob = 1 / ( 1 + np.exp(-x))
@@ -159,3 +162,69 @@ def plot_linear_logistic_2d(b, w_magnitude, w_angle):
     ax.set_title('Decision Boundary with Contours', fontsize=16)
 
     plt.show()
+
+# Enhanced Interactive 3D Plot using Plotly
+def plot_interactive_decision_boundary(X, y, model):
+    # Create a meshgrid to cover the feature space
+    x_min, x_max = X[:, 0].min() - 1, X[:, 0].max() + 1
+    y_min, y_max = X[:, 1].min() - 1, X[:, 1].max() + 1
+    xx, yy = np.meshgrid(np.arange(x_min, x_max, 0.1),
+                         np.arange(y_min, y_max, 0.1))
+
+    # Prepare to predict probabilities for each point in the meshgrid
+    Z = np.zeros((xx.ravel().shape[0], model.n_classes))
+
+    for i in range(len(Z)):
+        point = np.array([xx.ravel()[i], yy.ravel()[i]])
+        Z[i, :] = model.predict_proba(np.hstack([point, 0]).reshape(1, -1))
+
+    Z = Z.reshape(xx.shape[0], xx.shape[1], model.n_classes)
+
+    # Create enhanced interactive 3D scatter plot
+    fig = go.Figure()
+
+    # Add meshgrid decision boundary with improved aesthetics
+    for i in range(model.n_classes):
+        fig.add_trace(go.Surface(
+            z=Z[:, :, i], x=xx, y=yy,
+            opacity=0.6,
+            colorscale=px.colors.sequential.Plasma,  # Use a vibrant color scale
+            showscale=False,
+            name=f'Class {i}'
+        ))
+
+    # Scatter plot the actual test points with enhanced markers
+    scatter = go.Scatter3d(
+        x=X[:, 0],
+        y=X[:, 1],
+        z=np.argmax(y, axis=1),
+        mode='markers',
+        marker=dict(
+            size=7,
+            color=np.argmax(y, axis=1),
+            colorscale=px.colors.sequential.Plasma,
+            showscale=True,
+            line=dict(width=1)
+        ),
+        text=[f'Class: {np.argmax(y[i])}, Prob: {model.predict_proba(X[i].reshape(1, -1))}' for i in range(len(X))],
+        hoverinfo='text'
+    )
+
+    fig.add_trace(scatter)
+
+    # Set layout for the 3D plot with improved titles and axes
+    fig.update_layout(
+        title='Interactive 3D Multiclass Logistic Regression Decision Boundary',
+        scene=dict(
+            xaxis_title='Feature 1',
+            yaxis_title='Feature 2',
+            zaxis_title='Class',
+            camera=dict(eye=dict(x=1.5, y=1.5, z=1.5))  # Adjust camera angle for better view
+        ),
+        width=900,
+        height=700,
+        margin=dict(l=0, r=0, b=0, t=40),  # Adjust margins
+        template='plotly_white'  # Use a clean template
+    )
+
+    fig.show()
